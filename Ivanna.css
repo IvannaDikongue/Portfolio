@@ -1,0 +1,85 @@
+CREATE DATABASE expense_tracker;
+
+USE expense_tracker;
+
+CREATE TABLE expenses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    amount DECIMAL(10,2) NOT NULL,
+    category VARCHAR(50) NOT NULL,
+    description TEXT,
+    expense_date DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+<?php
+$host = "localhost"; // Change if using an online database
+$user = "root"; // Default user for local setup
+$password = ""; // Default password (empty in XAMPP)
+$dbname = "expense_tracker";
+
+// Create connection
+$conn = new mysqli($host, $user, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
+<?php
+include 'db_connect.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $amount = $_POST['amount'];
+    $category = $_POST['category'];
+    $description = $_POST['description'];
+    $expense_date = $_POST['expense_date'];
+
+    $sql = "INSERT INTO expenses (amount, category, description, expense_date) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("dsss", $amount, $category, $description, $expense_date);
+
+    if ($stmt->execute()) {
+        echo "Expense added successfully!";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
+<?php
+include 'db_connect.php';
+
+$sql = "SELECT * FROM expenses ORDER BY expense_date DESC";
+$result = $conn->query($sql);
+
+$expenses = [];
+
+while ($row = $result->fetch_assoc()) {
+    $expenses[] = $row;
+}
+
+echo json_encode($expenses);
+
+$conn->close();
+?>
+<?php
+include 'db_connect.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $id = $_POST['id'];
+
+    $sql = "DELETE FROM expenses WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        echo "Expense deleted successfully!";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
+}
+?>
