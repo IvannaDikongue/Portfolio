@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        input, textarea, button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #28a745;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        
+        <!-- Expense Form -->
+        <form id="expense-form">
+            <input type="number" id="amount" placeholder="Amount" required>
+            <input type="text" id="category" placeholder="Category" required>
+            <input type="date" id="expense_date" required>
+            <textarea id="description" placeholder="Description"></textarea>
+            <button type="submit">Add Expense</button>
+        </form>
+        
+        <!-- Expense List -->
+        <h2>Expense History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="expense-list">
+                <!-- Expenses will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const expenseForm = document.getElementById("expense-form");
+            const expenseList = document.getElementById("expense-list");
+
+            expenseForm.addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                const amount = document.getElementById("amount").value;
+                const category = document.getElementById("category").value;
+                const expenseDate = document.getElementById("expense_date").value;
+                const description = document.getElementById("description").value;
+                
+                if (!amount || !category || !expenseDate) {
+                    alert("Please fill in all required fields.");
+                    return;
+                }
+                
+                const expenseRow = document.createElement("tr");
+                expenseRow.innerHTML = `
+                    <td>${amount}</td>
+                    <td>${category}</td>
+                    <td>${expenseDate}</td>
+                    <td>${description}</td>
+                    <td><button class="delete-btn">Delete</button></td>
+                `;
+
+                expenseList.appendChild(expenseRow);
+                
+                // Clear form
+                expenseForm.reset();
+
+                // Delete button functionality
+                expenseRow.querySelector(".delete-btn").addEventListener("click", function() {
+                    expenseRow.remove();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
